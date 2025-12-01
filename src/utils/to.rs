@@ -144,7 +144,6 @@ impl Direction {
         self.to_number() - 1
     }
 
-    #[must_use]
     pub fn from_number(num: usize) -> Result<Self, ParseDirectionError<usize>> {
         match num {
             5 => Ok(Self::TopLeft),

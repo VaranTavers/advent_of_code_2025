@@ -18,7 +18,7 @@ fn main() -> Result<(), io::Error> {
     match part {
         1 => {
             match day {
-                1 => println!("{}", day1::solution(reader).unwrap()),
+                1 => println!("{}", day1::solution(reader)),
                 /*2 => println!("{}", day2::solution(reader).unwrap()),
                 3 => println!("{}", day3::solution(reader).unwrap()),
                 4 => println!("{}", day4::solution(reader).unwrap()),
@@ -35,7 +35,7 @@ fn main() -> Result<(), io::Error> {
         }
         _ => {
             match day {
-                1 => println!("{}", day1::solution2(reader).unwrap()),
+                1 => println!("{}", day1::solution2(reader)),
                 /*2 => println!("{}", day2::solution2(reader).unwrap()),
                 3 => println!("{}", day3::solution2(reader).unwrap()),
                 4 => println!("{}", day4::solution2(reader).unwrap()),
