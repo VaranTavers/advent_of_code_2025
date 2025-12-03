@@ -34,7 +34,7 @@ pub fn find_top_two(line: &[i8]) -> i8 {
 pub fn solution(reader: BufReader<File>) -> i64 {
     process_input(reader)
         .iter()
-        .fold(0, |acc, line| acc + find_top_two(line) as i64)
+        .fold(0, |acc, line| acc + i64::from(find_top_two(line)))
 }
 
 // Use only for testing!
@@ -46,7 +46,7 @@ pub fn recursive_version(line: &[i8], k: usize, i: usize, n: i64) -> i64 {
         return -1;
     }
 
-    let a = recursive_version(line, k - 1, i + 1, n * 10 + line[i] as i64);
+    let a = recursive_version(line, k - 1, i + 1, n * 10 + i64::from(line[i]));
     let b = recursive_version(line, k, i + 1, n);
 
     a.max(b)
@@ -79,7 +79,7 @@ pub fn calc_x_battery(line: &[i8], mut unused_digits: i8) -> i64 {
         // And after the next bigger digit there aren't enough other digits
         {
             unused_digits -= 1;
-            res = res * 10 + line[i] as i64;
+            res = res * 10 + i64::from(line[i]);
         }
 
         i += 1;
@@ -91,5 +91,5 @@ pub fn calc_x_battery(line: &[i8], mut unused_digits: i8) -> i64 {
 pub fn solution2(reader: BufReader<File>) -> i64 {
     process_input(reader)
         .iter()
-        .fold(0, |acc, line| acc + calc_x_battery(line, 12) as i64)
+        .fold(0, |acc, line| acc + calc_x_battery(line, 12))
 }

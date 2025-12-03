@@ -13,7 +13,7 @@ pub fn is_silly_pattern(mut n: i64) -> bool {
         p *= 10;
         n /= 10;
     }
-    return n == uj && p / 10 <= uj;
+    n == uj && p / 10 <= uj
 }
 
 pub fn process_input(reader: BufReader<File>) -> Vec<(i64, i64)> {
@@ -71,7 +71,7 @@ pub fn num_of_digits(mut n: i64) -> i64 {
 pub fn create_divisor(mut n: i64, i: i64) -> i64 {
     let mut uj = 0;
     while n > 0 {
-        let pp = (10 as i64).pow((i - 1) as u32);
+        let pp = 10_i64.pow((i - 1) as u32);
         uj = uj * 10 * pp + pp;
         n -= i;
     }
@@ -107,15 +107,15 @@ pub fn solution2(reader: BufReader<File>) -> i64 {
     for i in 1..=num_of_digits(max_num) {
         divs.push(generate_divisors(i));
     }
-    println!("{:?}", divs);
+    // println!("{:?}", divs);
 
     let res = values.iter().fold(0, |acc, (start, end)| {
-        //println!("{} {}", start, end);
+        // println!("{} {}", start, end);
         let mut s = 0;
         for i in *start..=*end {
             let db = num_of_digits(i) as usize;
             if is_divisible_by_any(i, &divs[db]) {
-                println!("{} {} {}", start, end, i);
+                // println!("{} {} {}", start, end, i);
                 s += i;
             }
         }
