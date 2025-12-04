@@ -2,8 +2,8 @@ mod charmap;
 mod from;
 #[macro_use]
 pub mod logmacro;
-mod to;
+mod direction;
 
 pub use charmap::CharMap;
+pub use direction::Direction;
 pub use from::From;
-pub use to::Direction;

@@ -172,16 +172,19 @@ impl Iterator for CharMapIterator<'_> {
     type Item = (usize, usize, char);
 
     fn next(&mut self) -> Option<Self::Item> {
+        if self.row >= self.cmap.map.len() {
+            return None;
+        }
+
+        let ret = Some((self.row, self.col, self.cmap.map[self.row][self.col]));
+
         self.col += 1;
         if self.col >= self.cmap.map[self.row].len() {
             self.col = 0;
             self.row += 1;
         }
-        if self.row >= self.cmap.map.len() {
-            return None;
-        }
 
-        Some((self.row, self.col, self.cmap.map[self.row][self.col]))
+        ret
     }
 }
 
