@@ -9,7 +9,7 @@ pub fn read_values(reader: BufReader<File>) -> (Vec<(u64, u64)>, Vec<u64>) {
 
     for line in reader.lines().map_while(Result::ok) {
         if !line.is_empty() {
-            if line.contains("-") {
+            if line.contains('-') {
                 let parts = line.split_once('-').expect("Spanish inquisition");
                 let num1 = parts.0.parse::<u64>().expect("Number 1 can't be parsed");
                 let num2 = parts.1.parse::<u64>().expect("Number 2 can't be parsed");
@@ -39,7 +39,7 @@ pub fn solution(reader: BufReader<File>) -> usize {
 pub fn solution2(reader: BufReader<File>) -> u64 {
     let (mut ranges_old, _) = read_values(reader);
 
-    ranges_old.sort();
+    ranges_old.sort_unstable();
 
     let mut ranges_new = Vec::new();
 

@@ -37,6 +37,7 @@ pub fn solution(reader: BufReader<File>) -> i64 {
         .fold(0, |acc, line| acc + i64::from(find_top_two(line)))
 }
 
+/*
 // Use only for testing!
 pub fn recursive_version(line: &[i8], k: usize, i: usize, n: i64) -> i64 {
     if k == 0 {
@@ -51,6 +52,7 @@ pub fn recursive_version(line: &[i8], k: usize, i: usize, n: i64) -> i64 {
 
     a.max(b)
 }
+ */
 
 pub fn calc_not_worse_than_x_and_next(line: &[i8]) -> (Vec<i8>, Vec<Option<usize>>) {
     let mut a = line.iter().map(|_x| 0).collect::<Vec<i8>>();

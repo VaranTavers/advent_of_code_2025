@@ -6,7 +6,7 @@ pub fn solution(reader: BufReader<File>) -> i64 {
     let cmap = CharMap::parse_map(reader);
     let mut res = 0;
 
-    for (i, j, c) in cmap.iter() {
+    for (i, j, c) in &cmap {
         if c == '@' {
             let mut neighbors = 0;
             for dir in Direction::all_directions() {
@@ -37,7 +37,7 @@ pub fn solution2(reader: BufReader<File>) -> i64 {
         while let Some(pos) = places.pop() {
             cmap.set(pos, 'x');
         }
-        for (i, j, c) in cmap.iter() {
+        for (i, j, c) in &cmap {
             if c == '@' {
                 let mut neighbors = 0;
                 for dir in Direction::all_directions() {
