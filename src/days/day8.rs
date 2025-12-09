@@ -30,8 +30,7 @@ pub fn read_lines(reader: BufReader<File>) -> Vec<Point3D> {
     reader
         .lines()
         .map_while(Result::ok)
-        .map(|x| Point3D::from_str(&x, ','))
-        .flatten()
+        .flat_map(|x| Point3D::from_str(&x, ','))
         .collect()
 }
 
@@ -59,7 +58,7 @@ pub fn solution(reader: BufReader<File>) -> usize {
 
     let mut i = 0;
 
-    for (_d, a, b) in dists.iter() {
+    for (_d, a, b) in &dists {
         let comp_a = components[*a];
         let comp_b = components[*b];
         //println!("{d} {a} {b} {comp_a} {comp_b}");
@@ -105,7 +104,7 @@ pub fn solution2(reader: BufReader<File>) -> f64 {
 
     let mut max_size = 0;
 
-    for (_d, a, b) in dists.iter() {
+    for (_d, a, b) in &dists {
         let comp_a = components[*a];
         let comp_b = components[*b];
         //println!("{d} {a} {b} {comp_a} {comp_b}");

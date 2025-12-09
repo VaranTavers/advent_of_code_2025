@@ -28,8 +28,7 @@ pub fn read_lines(reader: BufReader<File>) -> Vec<Point2D> {
     reader
         .lines()
         .map_while(Result::ok)
-        .map(|x| Point2D::from_str(&x, ','))
-        .flatten()
+        .flat_map(|x| Point2D::from_str(&x, ','))
         .collect()
 }
 

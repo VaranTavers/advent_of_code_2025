@@ -48,7 +48,7 @@ pub fn read_values2(reader: BufReader<File>) -> (Vec<Vec<char>>, Vec<char>) {
 
     for line in reader.lines().map_while(Result::ok) {
         if line.contains('*') {
-            operations = line.chars().to_owned().collect();
+            operations = line.chars().clone().collect();
         } else {
             for (i, val) in line.chars().enumerate() {
                 if columns.len() == i {
@@ -89,7 +89,7 @@ pub fn solution2(reader: BufReader<File>) -> u64 {
         if val != 0 && last_op == '*' {
             partial_res *= val;
         } else if last_op == '+' {
-            partial_res += val
+            partial_res += val;
         }
     }
 
