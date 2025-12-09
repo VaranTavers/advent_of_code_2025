@@ -160,6 +160,14 @@ pub fn valid(tiles: &[Point2D], i: usize, j: usize) -> bool {
     true
 }
 
+// The solution takes inspiration from my solution of AoC 2023 day 10 for handling corner cases, however irrelevant it is to this problem.
+
+// For each possible rectangle this algorithm checks wheter it is valid (is actually filled in).
+// This validity check only runs if the resulting rectangle would be bigger than the previous best.
+// The red tiles are aranged in a counter-clockwise rotation so there is an actual "outside" to them. I visualized them in Julia to better understand the pattern.
+// The validity check runs through the red tiles while "dragging along" a theoretical marker to the outside of it.
+// If at any point that marker enters the rectangle that we are checking, that signals that the rectangle is not, and thus I short circuit the check with a return false.
+
 pub fn solution2(reader: BufReader<File>) -> i64 {
     let tiles = read_lines(reader);
 
