@@ -22,10 +22,6 @@ impl Point2D {
             y: parts[1].parse::<i64>()?,
         })
     }
-
-    fn new(x: i64, y: i64) -> Point2D {
-        Point2D { x, y }
-    }
 }
 
 pub fn read_lines(reader: BufReader<File>) -> Vec<Point2D> {
@@ -54,189 +50,113 @@ pub fn solution(reader: BufReader<File>) -> i64 {
     max
 }
 
-pub fn is_line_inside_up(
-    tiles: &[Point2D],
-    i1: usize,
+pub fn intersects(
+    tile1: &Point2D,
+    tile2: &Point2D,
     p1: &Point2D,
     p2: &Point2D,
-) -> (bool, usize) {
-    let mut i = i1 + 1;
-    let mut p = &tiles[i];
-    let mut inside = true;
-    let mut next = Point2D::new(p1.x, p1.y + 1);
-
-    while p.y < p2.y {
-        if inside {
-            if p.x == next.x {
-                next = Point2D::new(p.x, p.y + 1);
-            } else {
-                if p.x > next.x {
-                    inside = false;
-                }
-            }
-        } else {
-            if p.y > next.y {
-                return (false, 0);
-            }
-            if p.x <= next.x {
-                inside = true;
-                next = Point2D::new(next.x, p.y + 1);
-            }
+    out_x: i64,
+    out_y: i64,
+) -> bool {
+    // If "out" intersects with rectangle
+    if tile2.x == tile1.x {
+        // If vertical
+        if !((tile1.y >= p1.y.max(p2.y) && tile2.y >= p1.y.max(p2.y)) // Not (above
+                || (tile1.y <= p1.y.min(p2.y) && tile2.y <= p1.y.min(p2.y))) // or below)
+                && tile1.x + out_x >= p1.x.min(p2.x)
+                && tile1.x + out_x <= p1.x.max(p2.x)
+        {
+            // println!("\tVERTICAL in FOR {tile1:?} {tile2:?} {out_x} {out_y}");
+            return true;
         }
-        i += 1;
-        p = &tiles[i];
-    }
-    // See if it comes back from too far right
-    while p.x > p2.x {
-        if p.y > p2.y {
-            return (false, 0);
+    } else if tile2.y == tile1.y {
+        // If horizontal
+        if !((tile1.x >= p1.x.max(p2.x) && tile2.x >= p1.x.max(p2.x)) // Not (to right
+                || (tile1.x <= p1.x.min(p2.x) && tile2.x <= p1.x.min(p2.x))) // or to left)
+                && tile1.y + out_y >= p1.y.min(p2.y)
+                && tile1.y + out_y <= p1.y.max(p2.y)
+        {
+            // println!("\tHORIZ in FOR {tile1:?} {tile2:?}  {out_x} {out_y}");
+            return true;
         }
-        i += 1;
-        p = &tiles[i];
-    }
-    if p.x == p2.x {
-        inside = true;
-    }
-    // See if it doesn't dip back down before it reaches the point
-    while p.x < p2.x {
-        if inside {
-            if p.y < p2.y {
-                inside = false;
-            }
-        } else {
-            if p.y > p2.y {
-                inside = true
-            }
-        }
-        i += 1;
-        p = &tiles[i];
     }
 
-    (inside, i)
+    false
 }
 
-#[cfg(test)]
-mod tests {
-    use super::*;
+pub fn turn(tile3: &Point2D, tile2: &Point2D, mut out_x: i64, mut out_y: i64) -> (i64, i64) {
+    if out_x != 0 && tile3.x != tile2.x {
+        // We are going up or down And we turn
+        if tile3.x < tile2.x {
+            out_y = 1;
+        } else {
+            out_y = -1;
+        }
 
-    #[test]
-    fn line_line_exact() {
-        let tiles = vec![Point2D::new(0, 0), Point2D::new(0, 5), Point2D::new(1, 5)];
-        assert!(is_line_inside_up(&tiles, 0, &tiles[0], &Point2D::new(0, 5)).0);
+        out_x = 0;
+    } else if out_y != 0 && tile3.y != tile2.y {
+        if tile3.y > tile2.y {
+            out_x = 1;
+        } else {
+            out_x = -1;
+        }
+
+        out_y = 0;
     }
-    #[test]
-    fn line_line_larger() {
-        let tiles = vec![Point2D::new(0, 0), Point2D::new(0, 8), Point2D::new(1, 8)];
-        assert!(is_line_inside_up(&tiles, 0, &tiles[0], &Point2D::new(0, 5)).0);
-    }
-    #[test]
-    fn line_outside() {
-        let tiles = vec![
-            Point2D::new(0, 0),
-            Point2D::new(0, 2),
-            Point2D::new(1, 2),
-            Point2D::new(1, 5),
-            Point2D::new(2, 5),
-        ];
-        assert!(!is_line_inside_up(&tiles, 0, &tiles[0], &Point2D::new(0, 5)).0);
-    }
-    #[test]
-    fn line_outside_but_comes_back() {
-        let tiles = vec![
-            Point2D::new(0, 0),
-            Point2D::new(0, 2),
-            Point2D::new(1, 2),
-            Point2D::new(1, 3),
-            Point2D::new(0, 3),
-            Point2D::new(0, 5),
-            Point2D::new(1, 5),
-        ];
-        assert!(is_line_inside_up(&tiles, 0, &tiles[0], &Point2D::new(0, 5)).0);
-    }
-    #[test]
-    fn line_outside_but_comes_back_late() {
-        let tiles = vec![
-            Point2D::new(0, 0),
-            Point2D::new(0, 2),
-            Point2D::new(1, 2),
-            Point2D::new(1, 4),
-            Point2D::new(0, 4),
-            Point2D::new(0, 5),
-            Point2D::new(1, 5),
-        ];
-        assert!(!is_line_inside_up(&tiles, 0, &tiles[0], &Point2D::new(0, 5)).0);
-    }
-    #[test]
-    fn line_outside_good() {
-        let tiles = vec![
-            Point2D::new(0, 0),
-            Point2D::new(0, 2),
-            Point2D::new(-1, 2),
-            Point2D::new(-1, 5),
-            Point2D::new(1, 5),
-            Point2D::new(2, 5),
-        ];
-        assert!(is_line_inside_up(&tiles, 0, &tiles[0], &Point2D::new(0, 5)).0);
-    }
-    #[test]
-    fn line_outside_bad_ending() {
-        let tiles = vec![
-            Point2D::new(0, 0),
-            Point2D::new(0, 2),
-            Point2D::new(-2, 2),
-            Point2D::new(-2, 5),
-            Point2D::new(-1, 5),
-            Point2D::new(-1, 4),
-            Point2D::new(1, 4),
-            Point2D::new(1, 5),
-            Point2D::new(2, 5),
-        ];
-        assert!(!is_line_inside_up(&tiles, 0, &tiles[0], &Point2D::new(0, 5)).0);
-    }
-    #[test]
-    fn line_outside_but_doesnt_come_back_jit() {
-        let tiles = vec![
-            Point2D::new(0, 0),
-            Point2D::new(0, 2),
-            Point2D::new(1, 2),
-            Point2D::new(1, 6),
-            Point2D::new(0, 6),
-            Point2D::new(0, 8),
-            Point2D::new(1, 8),
-        ];
-        assert!(!is_line_inside_up(&tiles, 0, &tiles[0], &Point2D::new(0, 5)).0);
-    }
-    #[test]
-    fn line_outside_but_comes_back_jit() {
-        let tiles = vec![
-            Point2D::new(0, 0),
-            Point2D::new(0, 2),
-            Point2D::new(1, 2),
-            Point2D::new(1, 5),
-            Point2D::new(0, 5),
-            Point2D::new(1, 5),
-        ];
-        assert!(is_line_inside_up(&tiles, 0, &tiles[0], &Point2D::new(0, 5)).0);
-    }
+
+    (out_x, out_y)
 }
 
 pub fn valid(tiles: &[Point2D], i: usize, j: usize) -> bool {
-    /*if tiles[i].x < tiles[j].x {
-        if tiles[i].y < tiles[j].y {
-            let range = i..=j;
+    // Which direction is out?
+    let mut out_x = 1; // Base case: up
+    let mut out_y = 0;
 
-            let mut next =
+    if tiles[1].x > tiles[0].x {
+        out_y = -1;
+        out_x = 0;
+    } else if tiles[1].x < tiles[0].x {
+        out_y = 1;
+        out_x = 0;
+    } else if tiles[1].y < tiles[0].y {
+        out_y = 0;
+        out_x = -1;
+    }
 
-        } else {
-            let range = j..=i;
+    let p1 = &tiles[i];
+    let p2 = &tiles[j];
+    // println!("VERIF {p1:?}, {p2:?}");
+
+    for ((tile1, tile2), tile3) in tiles
+        .iter()
+        .zip(tiles.iter().skip(1))
+        .zip(tiles.iter().skip(2))
+    {
+        // println!("\tVERIF in FOR {tile1:?} {tile2:?} {out_x} {out_y}");
+
+        if intersects(tile1, tile2, p1, p2, out_x, out_y) {
+            return false;
         }
-    } else {
-        if tiles[i].y < tiles[j].y {
-            let range = j..=i;
-        } else {
-            let range = i..=j;
-        }
-    };*/
+
+        (out_x, out_y) = turn(tile3, tile2, out_x, out_y);
+    }
+
+    let tile1 = &tiles[tiles.len() - 2];
+    let tile2 = &tiles[tiles.len() - 1];
+    let tile3 = &tiles[0];
+
+    if intersects(tile1, tile2, p1, p2, out_x, out_y) {
+        return false;
+    }
+
+    (out_x, out_y) = turn(tile3, tile2, out_x, out_y);
+
+    let tile1 = &tiles[tiles.len() - 1];
+    let tile2 = &tiles[0];
+
+    if intersects(tile1, tile2, p1, p2, out_x, out_y) {
+        return false;
+    }
 
     true
 }
@@ -250,6 +170,7 @@ pub fn solution2(reader: BufReader<File>) -> i64 {
         for (j, tile2) in tiles.iter().enumerate().skip(i + 1) {
             let area = tile1.area(tile2);
             if area > max && valid(&tiles, i, j) {
+                // println!("VALID {tile1:?} {tile2:?}");
                 max = area;
             }
         }

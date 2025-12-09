@@ -9,7 +9,7 @@ mod days;
 
 fn main() -> Result<(), io::Error> {
     let day = 9;
-    let part = 1;
+    let part = 2;
 
     let f = File::open(format!("inputs/input{day}.txt"))?;
     let reader = BufReader::new(f);
