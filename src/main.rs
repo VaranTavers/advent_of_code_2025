@@ -8,7 +8,7 @@ extern crate helper_lib;
 mod days;
 
 fn main() -> Result<(), io::Error> {
-    let day = 11;
+    let day = 10;
     let part = 2;
 
     let f = File::open(format!("inputs/input{day}.txt"))?;

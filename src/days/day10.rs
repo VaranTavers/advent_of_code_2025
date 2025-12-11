@@ -5,6 +5,11 @@ use std::{
     num::ParseIntError,
 };
 
+use z3::{
+    ast::{self, Int},
+    Config, Context, Optimize,
+};
+
 pub fn push_button(state: &[bool], button: &[usize]) -> Vec<bool> {
     let mut res = state.iter().cloned().collect::<Vec<bool>>();
 
@@ -119,10 +124,66 @@ pub fn solution(reader: BufReader<File>) -> usize {
         .sum()
 }
 
-pub fn ok() {}
+// Probably a bad idea, but bringing z3 along for the ride
 
-pub fn naive_backtracking(k: usize, nums: &mut [usize]) {}
+fn do_magic_on_problem(problem: &Problem) -> usize {
+    let cfg = Config::new();
+    let opt = Optimize::new();
 
-pub fn solution2(reader: BufReader<File>) -> i64 {
+    let vars = problem
+        .buttons
+        .iter()
+        .enumerate()
+        .map(|(i, _)| ast::Int::new_const(format!("b{i}")))
+        .collect::<Vec<Int>>();
+
+    let mut big_sum = ast::Int::from_u64(0);
+    for v in &vars {
+        opt.assert(&v.ge(ast::Int::from_u64(0)));
+        big_sum += v;
+    }
+
+    for (i, jolt) in problem.jolts.iter().enumerate() {
+        let res = ast::Int::from_u64(*jolt);
+        let mut buttons = ast::Int::from_u64(0);
+        for (j, b) in problem.buttons.iter().enumerate() {
+            if b.contains(&i) {
+                buttons += &vars[j];
+            }
+        }
+        opt.assert(&res.eq(buttons));
+    }
+
+    opt.minimize(&big_sum);
+
+    match opt.check(&[]) {
+        z3::SatResult::Unsat => {
+            println!("Unsat");
+        }
+        z3::SatResult::Unknown => {
+            println!("Unkown");
+        }
+        z3::SatResult::Sat => {
+            let model = opt.get_model().unwrap();
+
+            return model.eval(&big_sum, true).unwrap().as_u64().unwrap() as usize;
+        }
+    }
+
     0
+}
+
+pub fn solution2(reader: BufReader<File>) -> usize {
+    let problems = read_input(reader);
+
+    problems
+        .iter()
+        .map(|x| {
+            //println!("{x:?}");
+            let res = do_magic_on_problem(x);
+            //println!("{res:?}");
+
+            res
+        })
+        .sum()
 }
