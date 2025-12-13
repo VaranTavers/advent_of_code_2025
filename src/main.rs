@@ -3,13 +3,13 @@ use std::{
     io::{self, BufReader},
 };
 
-use crate::days::{day1, day10, day11, day2, day3, day4, day5, day6, day7, day8, day9};
+use crate::days::{day1, day10, day11, day12, day2, day3, day4, day5, day6, day7, day8, day9};
 extern crate helper_lib;
 mod days;
 
 fn main() -> Result<(), io::Error> {
-    let day = 10;
-    let part = 2;
+    let day = 12;
+    let part = 1;
 
     let f = File::open(format!("inputs/input{day}.txt"))?;
     let reader = BufReader::new(f);
@@ -29,7 +29,7 @@ fn main() -> Result<(), io::Error> {
                 9 => println!("{}", day9::solution(reader)),
                 10 => println!("{}", day10::solution(reader)),
                 11 => println!("{}", day11::solution(reader)),
-                /*12 => println!("{}", day12::solution(reader)),*/
+                12 => println!("{}", day12::solution(reader)),
                 _ => println!("What?"),
             };
         }
@@ -46,7 +46,7 @@ fn main() -> Result<(), io::Error> {
                 9 => println!("{}", day9::solution2(reader)),
                 10 => println!("{}", day10::solution2(reader)),
                 11 => println!("{}", day11::solution2(reader)),
-                /*12 => println!("{}", day12::solution2(reader)),*/
+                12 => println!("{}", day12::solution2(reader)),
                 _ => println!("What?"),
             };
         }
